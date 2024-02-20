@@ -1,0 +1,17 @@
+{
+  "name": "dbserver",
+  "version": "0.1.0",
+  "description": "MVS storage server using zkDatabase",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "npm run build && node .",
+    "start": "pm2 start --name \"dbserver\" node -- .",
+    "stop": "pm2 delete dbserver",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "contracts": "*"
+  }
+}
