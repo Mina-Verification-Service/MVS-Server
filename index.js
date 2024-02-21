@@ -1,1 +1,1 @@
-import("./build/dbserver/src/index.js");
+import("./build/src/index.js");

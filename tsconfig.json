@@ -23,7 +23,9 @@
     "allowSyntheticDefaultImports": true,
   },
   "include": [
-    "./src"
+    "./src",
+    "src/router.ts",
+    "contracts"
   ],
   "ts-node": {
     "require": [

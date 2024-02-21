@@ -1,5 +1,9 @@
 import Router from "@koa/router";
-import { addUserHandler, getUserHandler, getDBRootHandler } from "./routes/zkdb.js";
+import {
+  addUserHandler,
+  getUserHandler,
+  getDBRootHandler,
+} from "./routes/zkdb.js";
 
 const router = new Router();
 router.prefix("/zkdb");

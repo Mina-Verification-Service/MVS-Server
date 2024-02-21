@@ -21,7 +21,7 @@
     "dotenv": "^16.3.1",
     "koa": "^2.14.2",
     "next-transpile-modules": "10.0.1",
-    "o1js": "^0.13.*",
+    "o1js": "^0.12.*",
     "typescript": "5.2.2",
     "xmlhttprequest-ts": "^1.0.1",
     "zkdb": "^1.1.1"

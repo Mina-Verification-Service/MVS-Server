@@ -1,11 +1,11 @@
 import type { ParameterizedContext } from "koa";
-import { MVSMerkleWitness, UserData, UserSession } from "contracts";
-import { ZKDatabaseStorage } from "zkdb";
 import {
-  CircuitString,
-  PublicKey,
-} from "o1js";
-
+  MVSMerkleWitness,
+  UserData,
+  UserSession,
+} from "../../contracts/src/index.js";
+import { ZKDatabaseStorage } from "zkdb";
+import { CircuitString, PublicKey } from "o1js";
 async function startZkDB() {
   let merkleHeight = 20;
   const zkDB = await ZKDatabaseStorage.getInstance("zkdb-mvs", {
