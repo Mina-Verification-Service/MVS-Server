@@ -1,4 +1,4 @@
-import { Field, SmartContract, State, PublicKey } from 'o1js';
+import { Field, SmartContract, State, PublicKey, Signature, SelfProof } from 'o1js';
 declare const MVSMerkleWitnessV2_base: typeof import("o1js/dist/node/lib/merkle_tree").BaseMerkleWitness;
 export declare class MVSMerkleWitnessV2 extends MVSMerkleWitnessV2_base {
 }
@@ -49,6 +49,7 @@ export declare class ProofRecord extends ProofRecord_base {
     };
     json(): {
         userId: string;
+        userPubKey: string;
         proof: Field[];
     };
 }
@@ -59,6 +60,7 @@ export declare class MVSContractV2 extends SmartContract {
     initialized: State<import("o1js/dist/node/lib/bool").Bool>;
     init(): void;
     setZkdbRoot(storageRoot: Field): void;
-    addUser(record: Field, witness: MVSMerkleWitnessV2): void;
+    addProofRecord(record: Field, witness: MVSMerkleWitnessV2): void;
+    verifyProofRecord(record: Field, witness: MVSMerkleWitnessV2, signature: Signature, proof: SelfProof<MVSMerkleWitnessV2, void>, proofAsFields: [Field], userPubKey: PublicKey): void;
 }
 export {};

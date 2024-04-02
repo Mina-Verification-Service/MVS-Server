@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Field, Experimental, MerkleWitness, Bool, CircuitString, SmartContract, State, state, PublicKey, method, } from 'o1js';
+import { Field, Experimental, MerkleWitness, Bool, CircuitString, SmartContract, State, state, PublicKey, method, Signature, SelfProof, } from 'o1js';
 import { Schema } from './serializer';
 // Height of the Merkle Tree
 const merkleHeight = 20;
@@ -33,6 +33,7 @@ export const MVSProofGen = Experimental.ZkProgram({
 });
 export class ProofRecord extends Schema({
     userId: CircuitString,
+    userPubKey: PublicKey,
     proof: [Field],
 }) {
     // Deserialize the document from a Uint8Array
@@ -48,6 +49,7 @@ export class ProofRecord extends Schema({
     json() {
         return {
             userId: this.userId.toString(),
+            userPubKey: this.userPubKey.toBase58(),
             proof: this.proof,
         };
     }
@@ -69,6 +71,7 @@ export class MVSContractV2 extends SmartContract {
         // set controller
         this.mvsController.set(this.sender);
     }
+    // can only be called by controller
     setZkdbRoot(storageRoot) {
         // get states
         const initialized = this.initialized.getAndAssertEquals();
@@ -82,7 +85,8 @@ export class MVSContractV2 extends SmartContract {
         // lock the contract
         this.initialized.set(Bool(true));
     }
-    addUser(record, witness) {
+    // can only be called by controller
+    addProofRecord(record, witness) {
         // get contract states
         const controller = this.mvsController.getAndAssertEquals();
         const initialized = this.initialized.getAndAssertEquals();
@@ -101,6 +105,21 @@ export class MVSContractV2 extends SmartContract {
         // update root and counter
         this.storageRoot.set(newRoot);
         this.numOfUsers.set(noOfUsers.add(1));
+    }
+    // can be called by anybody
+    verifyProofRecord(record, witness, signature, proof, proofAsFields, userPubKey) {
+        // get storage
+        const storageRoot = this.storageRoot.getAndAssertEquals();
+        // calculate root
+        const userRoot = witness.calculateRoot(record);
+        // ensure that storage root and user root are the same
+        storageRoot.assertEquals(userRoot);
+        // check if proof signature is valid
+        const validSignature = signature.verify(userPubKey, proofAsFields);
+        // Check that the signature is valid
+        validSignature.assertTrue();
+        // then verify proof
+        proof.verify();
     }
 }
 __decorate([
@@ -130,5 +149,14 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Field, MVSMerkleWitnessV2]),
     __metadata("design:returntype", void 0)
-], MVSContractV2.prototype, "addUser", null);
+], MVSContractV2.prototype, "addProofRecord", null);
+__decorate([
+    method,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Field,
+        MVSMerkleWitnessV2,
+        Signature,
+        SelfProof, Array, PublicKey]),
+    __metadata("design:returntype", void 0)
+], MVSContractV2.prototype, "verifyProofRecord", null);
 //# sourceMappingURL=mvsProofs.js.map
